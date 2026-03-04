@@ -71,6 +71,32 @@ sudo bash setup/05-discord-bot.sh
 
 ---
 
+## Vault Sync (Syncthing — required for Discord bot)
+
+The Discord bot runs `claude -p` against the vault files on disk. Syncthing keeps the vault in sync with your Mac continuously, with no UI required.
+
+Syncthing is installed and started automatically by `install.sh`. The one-time pairing with the Mac:
+
+1. **On the Mac** — open the Syncthing web UI:
+   ```bash
+   open http://localhost:8384
+   ```
+2. Note the Device ID shown in the top-right corner of the Linux machine's UI at `http://<desktop-ip>:8384`
+3. On the Mac UI: **Add Remote Device** → paste the Linux Device ID → Save
+4. On the Linux UI: accept the incoming connection from the Mac
+5. On the Mac UI: **Folders → JonVaultSyn → Edit → Sharing** → check the Linux device → Save
+6. On the Linux UI: accept the shared folder, set the path to `~/Documents/JonVaultSyn`
+
+After pairing, the vault syncs automatically whenever both machines are online. The desktop is always on, so it will catch up on any changes made on the Mac when you come back.
+
+Update `VAULT_PATH` in the Discord bot env file to match:
+```
+VAULT_PATH=/home/jon/Documents/JonVaultSyn
+```
+Then restart the bot: `sudo systemctl restart discord-bot`
+
+---
+
 ## Post-Install: Re-index RAG
 
 After the RAG service is running, send the vault articles to it from your Mac:

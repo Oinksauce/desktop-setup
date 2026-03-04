@@ -43,15 +43,19 @@ run_step "Ollama + GPU"           02-ollama.sh
 run_step "Claude config & CLI"    03-claude-config.sh
 run_step "SBS RAG service"        04-rag.sh
 run_step "Discord vault bot"      05-discord-bot.sh
+run_step "Syncthing vault sync"   06-syncthing.sh
 
 echo "══════════════════════════════════════════"
 echo "Setup complete!"
 echo
 echo "Service status:"
-systemctl is-active --quiet sbs-rag     && echo "  ✓ sbs-rag"      || echo "  ✗ sbs-rag (check: journalctl -u sbs-rag -n 50)"
-systemctl is-active --quiet discord-bot && echo "  ✓ discord-bot"  || echo "  ✗ discord-bot (check: journalctl -u discord-bot -n 50)"
+systemctl is-active --quiet sbs-rag                       && echo "  ✓ sbs-rag"      || echo "  ✗ sbs-rag (check: journalctl -u sbs-rag -n 50)"
+systemctl is-active --quiet discord-bot                   && echo "  ✓ discord-bot"  || echo "  ✗ discord-bot (check: journalctl -u discord-bot -n 50)"
+systemctl is-active --quiet "syncthing@${INSTALL_USER}"   && echo "  ✓ syncthing"    || echo "  ✗ syncthing (check: journalctl -u syncthing@${INSTALL_USER} -n 50)"
 echo
 echo "Next steps:"
-echo "  1. Re-index RAG from Mac: python3 ~/.claude/scripts/sbs/rag_index.py"
-echo "  2. Verify RAG: curl http://localhost:8765/health"
-echo "  3. Check Discord bot: journalctl -u discord-bot -f"
+echo "  1. Pair Syncthing with Mac (see instructions above) — vault must sync before bot works"
+echo "  2. Set VAULT_PATH in ~/.claude/scripts/.discord-vault-bot.env"
+echo "  3. Restart Discord bot after vault is synced: sudo systemctl restart discord-bot"
+echo "  4. Re-index RAG from Mac: python3 ~/.claude/scripts/sbs/rag_index.py"
+echo "  5. Verify RAG: curl http://localhost:8765/health"

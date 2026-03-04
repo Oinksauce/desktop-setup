@@ -71,29 +71,40 @@ sudo bash setup/05-discord-bot.sh
 
 ---
 
-## Vault Sync (Syncthing — required for Discord bot)
+## Vault Sync (Obsidian Sync — required for Discord bot)
 
-The Discord bot runs `claude -p` against the vault files on disk. Syncthing keeps the vault in sync with your Mac continuously, with no UI required.
+The Discord bot runs `claude -p` against vault files on disk. Obsidian Sync keeps the vault current across all your devices — Mac, Linux desktop, phone.
 
-Syncthing is installed and started automatically by `install.sh`. The one-time pairing with the Mac:
+`install.sh` installs Obsidian and adds it to autostart. After that, two manual steps:
 
-1. **On the Mac** — open the Syncthing web UI:
-   ```bash
-   open http://localhost:8384
-   ```
-2. Note the Device ID shown in the top-right corner of the Linux machine's UI at `http://<desktop-ip>:8384`
-3. On the Mac UI: **Add Remote Device** → paste the Linux Device ID → Save
-4. On the Linux UI: accept the incoming connection from the Mac
-5. On the Mac UI: **Folders → JonVaultSyn → Edit → Sharing** → check the Linux device → Save
-6. On the Linux UI: accept the shared folder, set the path to `~/Documents/JonVaultSyn`
+**1. Enable auto-login**
 
-After pairing, the vault syncs automatically whenever both machines are online. The desktop is always on, so it will catch up on any changes made on the Mac when you come back.
+Obsidian Sync only runs while Obsidian is open. Auto-login ensures Obsidian starts at boot even with nobody at the keyboard:
 
-Update `VAULT_PATH` in the Discord bot env file to match:
+- GNOME Settings → Users → Automatic Login → ON
+- Or via config: edit `/etc/gdm3/custom.conf`:
+  ```ini
+  [daemon]
+  AutomaticLoginEnable=true
+  AutomaticLogin=jon
+  ```
+  Then: `sudo systemctl restart gdm`
+
+**2. Sign into Obsidian Sync**
+
+On first login, Obsidian launches automatically. Then:
+1. Settings → Sync → Sign in with your Obsidian account
+2. Connect to the **JonVaultSyn** remote vault
+3. Wait for initial sync to complete (may take a few minutes for 400+ articles)
+4. Note the vault path Obsidian chose (typically `~/Documents/JonVaultSyn`)
+
+**3. Update the Discord bot env file**
+
+```bash
+nano ~/.claude/scripts/.discord-vault-bot.env
+# Set: VAULT_PATH=/home/jon/Documents/JonVaultSyn
+sudo systemctl restart discord-bot
 ```
-VAULT_PATH=/home/jon/Documents/JonVaultSyn
-```
-Then restart the bot: `sudo systemctl restart discord-bot`
 
 ---
 

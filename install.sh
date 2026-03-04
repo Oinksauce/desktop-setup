@@ -44,17 +44,20 @@ run_step "Claude config & CLI"    03-claude-config.sh
 run_step "SBS RAG service"        04-rag.sh
 run_step "Discord vault bot"      05-discord-bot.sh
 run_step "Obsidian + vault sync"  06-obsidian.sh
+run_step "AnythingLLM (Docker)"  07-anythinllm.sh
 
 echo "══════════════════════════════════════════"
 echo "Setup complete!"
 echo
 echo "Service status:"
-systemctl is-active --quiet sbs-rag     && echo "  ✓ sbs-rag"      || echo "  ✗ sbs-rag (check: journalctl -u sbs-rag -n 50)"
-systemctl is-active --quiet discord-bot && echo "  ✓ discord-bot"  || echo "  ✗ discord-bot (check: journalctl -u discord-bot -n 50)"
+systemctl is-active --quiet sbs-rag     && echo "  ✓ sbs-rag"        || echo "  ✗ sbs-rag (check: journalctl -u sbs-rag -n 50)"
+systemctl is-active --quiet discord-bot && echo "  ✓ discord-bot"    || echo "  ✗ discord-bot (check: journalctl -u discord-bot -n 50)"
+systemctl is-active --quiet anythinllm  && echo "  ✓ anythinllm"     || echo "  ✗ anythinllm (check: journalctl -u anythinllm -n 50)"
 echo
 echo "Remaining manual steps:"
 echo "  1. Enable auto-login: Settings → Users → Automatic Login"
 echo "  2. Log in, open Obsidian, sign into Obsidian Sync, connect vault"
 echo "  3. Set VAULT_PATH in ~/.claude/scripts/.discord-vault-bot.env"
 echo "  4. sudo systemctl restart discord-bot"
-echo "  5. Re-index RAG from Mac: python3 ~/.claude/scripts/sbs/rag_index.py"
+echo "  5. Configure AnythingLLM at http://192.168.1.110:3001"
+echo "  6. Re-index RAG from Mac: python3 ~/.claude/scripts/sbs/rag_index.py"

@@ -108,6 +108,33 @@ sudo systemctl restart discord-bot
 
 ---
 
+## AnythingLLM
+
+AnythingLLM runs as a Docker container — no desktop session needed, accessible from any device on the LAN.
+
+- **URL:** `http://192.168.1.110:3001`
+- **Storage:** `~/.anythinllm/`
+- **Service:** `anythinllm` (systemd, managed via docker compose)
+
+**First-time setup** (in browser at `http://192.168.1.110:3001`):
+
+1. Create admin account
+2. **LLM Provider** — choose one:
+   - *Ollama* → `http://localhost:11434` (free, local, good for most tasks)
+   - *OpenRouter* → API key from openrouter.ai (many free cloud models)
+   - *Anthropic* → Claude API key (best reasoning, API-billed)
+3. **Embedding model** → Ollama → `nomic-embed-text` (already pulled, free)
+4. Create a workspace, upload documents, start chatting
+
+**Useful workspaces to create:**
+- Westford meeting minutes (after marker-pdf conversion on M5)
+- Legal documents
+- SBS articles (alternative to the custom RAG service)
+
+**Logs:** `journalctl -u anythinllm -f`
+
+---
+
 ## Post-Install: Re-index RAG
 
 After the RAG service is running, send the vault articles to it from your Mac:

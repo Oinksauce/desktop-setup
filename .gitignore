@@ -1,0 +1,6 @@
+# Secrets — never commit
+*.env
+!config/example.env
+
+# OS
+.DS_Store

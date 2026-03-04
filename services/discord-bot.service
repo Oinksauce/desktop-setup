@@ -1,0 +1,19 @@
+[Unit]
+Description=Discord Vault Bot (Claude Code)
+Documentation=https://github.com/Oinksauce/claude-config
+After=network.target
+
+[Service]
+Type=simple
+User=__USER__
+WorkingDirectory=__USER_HOME__/.claude/scripts
+ExecStart=__USER_HOME__/.claude/venvs/discord-bot/bin/python3 discord-vault-bot.py
+Restart=on-failure
+RestartSec=10
+EnvironmentFile=__USER_HOME__/.claude/scripts/.discord-vault-bot.env
+Environment=PYTHONUNBUFFERED=1
+StandardOutput=append:__USER_HOME__/.claude/logs/discord-bot.log
+StandardError=append:__USER_HOME__/.claude/logs/discord-bot.log
+
+[Install]
+WantedBy=multi-user.target

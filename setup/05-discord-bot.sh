@@ -31,7 +31,7 @@ if [ ! -f "$BOT_SCRIPT" ]; then
 fi
 
 # ── Python venv ────────────────────────────────────────────────────────────────
-mkdir -p "$USER_HOME/.claude/venvs"
+sudo -u "$INSTALL_USER" mkdir -p "$USER_HOME/.claude/venvs"
 if [ ! -d "$VENV_DIR" ]; then
     echo "Creating Python venv at $VENV_DIR..."
     sudo -u "$INSTALL_USER" python3 -m venv "$VENV_DIR"

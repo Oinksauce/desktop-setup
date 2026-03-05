@@ -43,6 +43,12 @@ echo "  ✓ packages installed"
 sudo -u "$INSTALL_USER" ln -sf "$SERVICE_SCRIPT" "$RAG_DIR/rag_service.py"
 echo "  ✓ symlinked rag_service.py from claude-config"
 
+# ── Open firewall port ─────────────────────────────────────────────────────────
+if command -v ufw &> /dev/null; then
+    ufw allow ${PORT}/tcp > /dev/null 2>&1
+    echo "  ✓ ufw: port ${PORT} open for RAG service"
+fi
+
 # ── Install systemd service ────────────────────────────────────────────────────
 echo "Installing sbs-rag systemd service..."
 sed \

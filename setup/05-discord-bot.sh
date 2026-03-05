@@ -8,6 +8,9 @@ ENV_FILE="$USER_HOME/.claude/scripts/.discord-vault-bot.env"
 
 echo "Setting up Discord vault bot..."
 
+# ── Fix ownership of ~/.claude in case prior runs created root-owned files ─────
+chown -R "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.claude"
+
 # ── Check for env file ─────────────────────────────────────────────────────────
 if [ ! -f "$ENV_FILE" ]; then
     echo "  ⚠  Env file not found: $ENV_FILE"

@@ -33,7 +33,7 @@ sudo -u "$INSTALL_USER" mkdir -p "$STORAGE_DIR"
 cat > "$COMPOSE_FILE" << EOF
 services:
   anythinllm:
-    image: mintplexlabs/anythinllm:latest
+    image: mintplexlabs/anythingllm:latest
     container_name: anythinllm
     restart: unless-stopped
     ports:

@@ -64,6 +64,7 @@ Requires=docker.service
 [Service]
 Type=simple
 User=$INSTALL_USER
+SupplementaryGroups=docker
 WorkingDirectory=$STORAGE_DIR
 ExecStartPre=/usr/bin/docker compose pull --quiet
 ExecStart=/usr/bin/docker compose up

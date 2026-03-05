@@ -42,7 +42,7 @@ if ! grep -q '\.local/bin' "$BASHRC" 2>/dev/null; then
 fi
 
 # ── Claude Code CLI ───────────────────────────────────────────────────────────
-if sudo -u "$INSTALL_USER" bash -c 'command -v claude &> /dev/null'; then
+if [ -f "$USER_HOME/.local/bin/claude" ]; then
     echo "Claude Code already installed"
 else
     echo "Installing Claude Code CLI..."

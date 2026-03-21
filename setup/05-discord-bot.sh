@@ -13,7 +13,7 @@ echo "Setting up Discord vault bot (Claude Code Channels)..."
 # ── Install Bun (required by the Discord plugin's MCP server) ─────────────────
 if ! sudo -u "$INSTALL_USER" bash -c "source \"\$HOME/.bashrc\" 2>/dev/null; command -v bun" &>/dev/null; then
     echo "Installing Bun..."
-    sudo -u "$INSTALL_USER" bash -c 'curl -fsSL https://bun.sh/install | bash'
+    sudo -u "$INSTALL_USER" bash -c 'set -euo pipefail; curl -fsSL https://bun.sh/install | bash'
     echo "  ✓ Bun installed"
 else
     echo "  ✓ Bun already installed"
@@ -25,7 +25,7 @@ if [ ! -f "$ENV_FILE" ]; then
     echo
     echo "  Create it from the template:"
     echo "    mkdir -p $(dirname "$ENV_FILE")"
-    echo "    cp $ENV_TEMPLATE $ENV_FILE"
+    echo "    cp \"$ENV_TEMPLATE\" \"$ENV_FILE\""
     echo "    nano $ENV_FILE   # paste your DISCORD_BOT_TOKEN"
     echo
     echo "  Then re-run this script or complete setup manually."

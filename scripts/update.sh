@@ -22,4 +22,9 @@ echo
 systemctl is-active --quiet sbs-rag     && echo "  ✓ sbs-rag running"      || echo "  ✗ sbs-rag failed"
 systemctl is-active --quiet discord-bot && echo "  ✓ discord-bot running"  || echo "  ✗ discord-bot failed"
 echo
-echo "Done. RAG and bot are running the latest scripts from claude-config."
+echo "Done."
+echo
+echo "  RAG service is running the latest scripts from claude-config."
+echo "  Discord bot runs Claude Code -- to update Claude Code itself:"
+echo "    curl -fsSL https://claude.ai/install.sh | sh"
+echo "    sudo systemctl restart discord-bot"

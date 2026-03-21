@@ -2,9 +2,11 @@
 Description=Discord Vault Bot (Claude Code Channels)
 After=network-online.target
 ConditionPathIsDirectory=__USER_HOME__/Documents/JonVaultSyn/.obsidian
+StartLimitIntervalSec=120
+StartLimitBurst=5
 
 [Service]
-Type=simple
+Type=exec
 User=__USER__
 Environment=PATH=__USER_HOME__/.local/bin:__USER_HOME__/.bun/bin:/usr/local/bin:/usr/bin:/bin
 ExecStart=__USER_HOME__/.local/bin/claude --channels plugin:discord@claude-plugins-official
@@ -12,6 +14,7 @@ WorkingDirectory=__USER_HOME__/Documents/JonVaultSyn
 EnvironmentFile=__USER_HOME__/.claude/channels/discord/.env
 Restart=on-failure
 RestartSec=10
+TimeoutStartSec=30
 StandardOutput=journal
 StandardError=journal
 

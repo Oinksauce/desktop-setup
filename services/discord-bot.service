@@ -1,19 +1,19 @@
 [Unit]
-Description=Discord Vault Bot (Claude Code)
-Documentation=https://github.com/Oinksauce/claude-config
-After=network.target
+Description=Discord Vault Bot (Claude Code Channels)
+After=network-online.target
+ConditionPathIsDirectory=__USER_HOME__/Documents/JonVaultSyn/.obsidian
 
 [Service]
 Type=simple
 User=__USER__
-WorkingDirectory=__USER_HOME__/.claude/scripts
-ExecStart=__USER_HOME__/.claude/venvs/discord-bot/bin/python3 discord-vault-bot.py
+Environment=PATH=__USER_HOME__/.local/bin:__USER_HOME__/.bun/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=__USER_HOME__/.local/bin/claude --channels plugin:discord@claude-plugins-official
+WorkingDirectory=__USER_HOME__/Documents/JonVaultSyn
+EnvironmentFile=__USER_HOME__/.claude/channels/discord/.env
 Restart=on-failure
 RestartSec=10
-EnvironmentFile=__USER_HOME__/.claude/scripts/.discord-vault-bot.env
-Environment=PYTHONUNBUFFERED=1
-StandardOutput=append:__USER_HOME__/.claude/logs/discord-bot.log
-StandardError=append:__USER_HOME__/.claude/logs/discord-bot.log
+StandardOutput=journal
+StandardError=journal
 
 [Install]
 WantedBy=multi-user.target

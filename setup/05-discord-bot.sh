@@ -1,56 +1,46 @@
 #!/usr/bin/env bash
-# 05-discord-bot.sh — Set up the Discord vault bot as a systemd service.
+# 05-discord-bot.sh — Set up the Discord vault bot (Claude Code Channels plugin).
 set -euo pipefail
 
-VENV_DIR="$USER_HOME/.claude/venvs/discord-bot"
-BOT_SCRIPT="$USER_HOME/.claude/scripts/discord-vault-bot.py"
-ENV_FILE="$USER_HOME/.claude/scripts/.discord-vault-bot.env"
+ENV_FILE="$USER_HOME/.claude/channels/discord/.env"
+ENV_TEMPLATE="$SCRIPT_DIR/config/example.env"
 
-echo "Setting up Discord vault bot..."
+echo "Setting up Discord vault bot (Claude Code Channels)..."
 
 # ── Fix ownership of ~/.claude in case prior runs created root-owned files ─────
-chown -R "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.claude"
+[ -d "$USER_HOME/.claude" ] && chown -R "$INSTALL_USER:$INSTALL_USER" "$USER_HOME/.claude"
+
+# ── Install Bun (required by the Discord plugin's MCP server) ─────────────────
+if ! sudo -u "$INSTALL_USER" bash -c "source \"\$HOME/.bashrc\" 2>/dev/null; command -v bun" &>/dev/null; then
+    echo "Installing Bun..."
+    sudo -u "$INSTALL_USER" bash -c 'curl -fsSL https://bun.sh/install | bash'
+    echo "  ✓ Bun installed"
+else
+    echo "  ✓ Bun already installed"
+fi
 
 # ── Check for env file ─────────────────────────────────────────────────────────
 if [ ! -f "$ENV_FILE" ]; then
     echo "  ⚠  Env file not found: $ENV_FILE"
     echo
     echo "  Create it from the template:"
-    echo "    cp $SCRIPT_DIR/config/example.env $ENV_FILE"
-    echo "    nano $ENV_FILE"
+    echo "    mkdir -p $(dirname "$ENV_FILE")"
+    echo "    cp $ENV_TEMPLATE $ENV_FILE"
+    echo "    nano $ENV_FILE   # paste your DISCORD_BOT_TOKEN"
     echo
-    echo "  Then re-run this script or start the service manually:"
-    echo "    sudo bash $SCRIPT_DIR/setup/05-discord-bot.sh"
+    echo "  Then re-run this script or complete setup manually."
     echo
     echo "  Skipping Discord bot service installation."
     exit 0
 fi
 
-# ── Verify bot script is present ──────────────────────────────────────────────
-if [ ! -f "$BOT_SCRIPT" ]; then
-    echo "✗ $BOT_SCRIPT not found."
-    echo "  Run setup/03-claude-config.sh first."
+# ── Verify Claude Code is installed ───────────────────────────────────────────
+CLAUDE_BIN="$USER_HOME/.local/bin/claude"
+if [ ! -x "$CLAUDE_BIN" ]; then
+    echo "✗ Claude Code not found at $CLAUDE_BIN"
+    echo "  Run setup/03-claude-config.sh first, or check the install path with: which claude"
     exit 1
 fi
-
-# ── Python venv ────────────────────────────────────────────────────────────────
-sudo -u "$INSTALL_USER" mkdir -p "$USER_HOME/.claude/venvs"
-if [ ! -d "$VENV_DIR" ]; then
-    echo "Creating Python venv at $VENV_DIR..."
-    sudo -u "$INSTALL_USER" python3 -m venv "$VENV_DIR"
-fi
-
-echo "Installing Discord bot dependencies..."
-sudo -u "$INSTALL_USER" "$VENV_DIR/bin/pip" install --upgrade pip --quiet
-sudo -u "$INSTALL_USER" "$VENV_DIR/bin/pip" install \
-    "discord.py" \
-    aiohttp \
-    faster-whisper \
-    --quiet
-echo "  ✓ packages installed"
-
-# ── Create log directory ───────────────────────────────────────────────────────
-sudo -u "$INSTALL_USER" mkdir -p "$USER_HOME/.claude/logs"
 
 # ── Install systemd service ────────────────────────────────────────────────────
 echo "Installing discord-bot systemd service..."
@@ -61,17 +51,22 @@ sed \
 
 systemctl daemon-reload
 systemctl enable discord-bot
-systemctl restart discord-bot
-
-sleep 2
-if systemctl is-active --quiet discord-bot; then
-    echo "  ✓ discord-bot service started"
-else
-    echo "  ⚠  discord-bot may have failed to start"
-    echo "     Check: journalctl -u discord-bot -n 50"
-fi
+# Do NOT start the service yet — the plugin must be installed and paired interactively first.
 
 echo
-echo "✓ Discord bot setup complete"
+echo "✓ Discord bot service installed and enabled (not yet started)"
+echo
+echo "  REQUIRED: Complete the one-time interactive setup before starting:"
+echo "    1. On the desktop as $INSTALL_USER, run:"
+echo "       claude"
+echo "       /plugin install discord@claude-plugins-official"
+echo "       /discord:configure \$(grep DISCORD_BOT_TOKEN $ENV_FILE | cut -d= -f2)"
+echo "    2. Run: claude --channels plugin:discord@claude-plugins-official"
+echo "    3. DM the bot on Discord to get a pairing code"
+echo "    4. In Claude: /discord:access pair <code>"
+echo "    5. In Claude: /discord:access policy allowlist"
+echo "    6. Verify: cat ~/.claude/channels/discord/access.json"
+echo "    7. Exit and start the service: sudo systemctl start discord-bot"
+echo
 echo "  Status: systemctl status discord-bot"
 echo "  Logs:   journalctl -u discord-bot -f"
